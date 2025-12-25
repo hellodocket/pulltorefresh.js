@@ -37,6 +37,12 @@ export default options => {
     // stop pending any pending callbacks
     clearTimeout(_shared.timeout);
 
+    // remove PTR element if it exists
+    if (_handler.ptrElement && _handler.ptrElement.parentNode) {
+      _handler.ptrElement.parentNode.removeChild(_handler.ptrElement);
+      _handler.ptrElement = null;
+    }
+
     // remove handler from shared state
     const offset = _shared.handlers.indexOf(_handler);
     _shared.handlers.splice(offset, 1);

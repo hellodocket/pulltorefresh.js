@@ -60,9 +60,6 @@ API
 - **`distThreshold`** (integer)
   Minimum distance required to trigger the refresh.
   <br />&mdash; Defaults to `60`
-- **`distMax`** (integer)
-  Maximum distance possible for the element.
-  <br />&mdash; Defaults to `80`
 - **`distReload`** (integer)
   After the `distThreshold` is reached and released, the element will have this height.
   <br />&mdash; Defaults to `50`
@@ -113,9 +110,11 @@ API
 - **`onRefresh`** (function)
   What will the pull to refresh trigger? You can return a promise.
   <br />&mdash; Defaults to `window.location.reload()`
-- **`resistanceFunction`** (function)
-  The resistance function, accepts one parameter, must return a number, capping at 1.
-  <br />&mdash; Defaults to `t => Math.min(1, t / 2.5)`
+- **`distanceResistedFunction`** (function)
+  Calculates the resisted pull distance. Receives an object with `distExtra` (distance pulled past `distIgnore`) and `distThreshold` (threshold to trigger refresh). Returns the actual distance the PTR element should be pulled.
+  <br />&mdash; Defaults to `({ distExtra, distThreshold }) => Math.min(1, (distExtra / distThreshold) / 2.5) * distExtra`
+- **`onReleasingWhilePulling`** (function)
+  Callback triggered when transitioning from the pulling state to the releasing state (i.e., when the user has pulled past `distThreshold`).
 - **`shouldPullToRefresh`** (function)
   Which condition should be met for pullToRefresh to trigger?
   <br />&mdash; Defaults to `!window.scrollY` • Please note that this default is useful whenever you're setting mainElement as the body of the document, if you need it in another element with overflow, use `!this.mainElement.scrollTop`. Refer to the [multiple instances demo](https://www.boxfactura.com/pulltorefresh.js/demos/multiple.html) for reference.

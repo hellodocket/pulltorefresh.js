@@ -3,7 +3,42 @@ extend ../_/layout
 block run
   script.
     /* global PullToRefresh */
+    function computePiecewiseLinear(x, segments) {
+    let ret = 0;
+
+    for (let i = 0; i < segments.length; i++) {
+        const { startingAtX, denominator } = segments[i];
+        const nextStartingAtX = segments[i + 1]?.startingAtX ?? Infinity;
+
+        if (x <= startingAtX) {
+        break;
+        }
+        const segmentEnd = Math.min(x, nextStartingAtX);
+        const segmentContribution = (segmentEnd - startingAtX) / denominator;
+
+        ret += segmentContribution;
+    }
+
+    return ret;
+    }
     PullToRefresh.init({
-      mainElement: '#main',
-      onRefresh: function() { alert('refresh') }
+    mainElement: '#main',
+    distThreshold: 80,
+    onReleasingWhilePulling: () => {console.log('releasing while pulling'); },
+    distanceResistedFunction: ({ distExtra, distThreshold }) => {
+        let x = distExtra;
+        const segments = [
+        { startingAtX: 0, denominator: 1 },
+        { startingAtX: 10, denominator: 1.25 },
+        { startingAtX: 25, denominator: 1.5 },
+        { startingAtX: 50, denominator: 2 },
+        { startingAtX: 75, denominator: 3 },
+        { startingAtX: 120, denominator: 5 },
+        ];
+        const ret = computePiecewiseLinear(x, segments);
+        return ret;
+    },
+    onRefresh: function () {
+        alert('refresh');
+    },
     });

@@ -44,12 +44,6 @@ function onReset(handler) {
   handler.ptrElement.style[handler.cssProp] = '0px';
 
   setTimeout(() => {
-    // remove previous ptr-element from DOM
-    if (handler.ptrElement && handler.ptrElement.parentNode) {
-      handler.ptrElement.parentNode.removeChild(handler.ptrElement);
-      handler.ptrElement = null;
-    }
-
     // reset state
     _shared.state = 'pending';
   }, handler.refreshTimeout);

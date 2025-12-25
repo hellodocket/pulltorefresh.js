@@ -3,7 +3,6 @@ import _ptrStyles from './styles';
 
 export default {
   distThreshold: 60,
-  distMax: 80,
   distReload: 50,
   distIgnore: 0,
   mainElement: 'body',
@@ -21,6 +20,7 @@ export default {
   getStyles: () => _ptrStyles,
   onInit: () => {},
   onRefresh: () => location.reload(),
-  resistanceFunction: t => Math.min(1, t / 2.5),
+  distanceResistedFunction: ({ distExtra, distThreshold }) => Math.min(1, (distExtra / distThreshold) / 2.5) * distExtra,
+  onReleasingWhilePulling: () => {},
   shouldPullToRefresh: () => !window.scrollY,
 };

@@ -72,10 +72,13 @@ export default () => {
 
       _el.ptrElement.style[_el.cssProp] = `${_shared.distResisted}px`;
 
-      _shared.distResisted = _el.resistanceFunction(_shared.distExtra / _el.distThreshold)
-        * Math.min(_el.distMax, _shared.distExtra);
+      _shared.distResisted = _el.distanceResistedFunction({
+        distExtra: _shared.distExtra,
+        distThreshold: _el.distThreshold,
+      });
 
       if (_shared.state === 'pulling' && _shared.distResisted > _el.distThreshold) {
+        _el.onReleasingWhilePulling();
         _el.ptrElement.classList.add(`${_el.classPrefix}release`);
         _shared.state = 'releasing';
         _ptr.update(_el);
