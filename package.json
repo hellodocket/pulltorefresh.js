@@ -1,5 +1,5 @@
 {
-  "name": "pulltorefreshjs",
+  "name": "@turgid-tributary/pulltorefreshjs",
   "version": "0.1.22",
   "description": "Pull To Refresh",
   "main": "dist/index.js",
@@ -22,6 +22,7 @@
     "posttest": "git checkout -- demos dist",
     "test": "testcafe ${BROWSER:-chrome:headless} -a 'npm run serve -- --no-browser' tests/e2e/cases"
   },
+  "types": "./index.d.ts",
   "files": [
     "dist/*.js"
   ],
