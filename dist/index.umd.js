@@ -1,5 +1,5 @@
 /*!
- * @turgid-tributary/pulltorefreshjs v0.1.22
+ * @turgid-tributary/pulltorefreshjs v0.2.0
  * (c) Rafael Soto
  * Released under the MIT License.
  */
