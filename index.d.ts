@@ -16,12 +16,6 @@ export interface Options {
     distThreshold?: number | undefined;
 
     /**
-     * Maximum distance possible for the element.
-     * (default: `80`)
-     */
-    distMax?: number | undefined;
-
-    /**
      * After the `distThreshold` is reached and released, the element will have this height.
      * (default: `50`)
      */
@@ -122,11 +116,16 @@ export interface Options {
     onRefresh?: (() => PromiseLike<void>) | (() => void) | undefined;
 
     /**
-     * The resistance function, accepts one parameter, must return a number, capping at 1.
+     * Function to calculate the resisted pull distance.
      *
-     * Defaults to `t => Math.min(1, t / 2.5)`
+     * Defaults to `({ distExtra, distThreshold }) => Math.min(1, (distExtra / distThreshold) / 2.5) * distExtra`
      */
-    resistanceFunction?(input: number): number;
+    distanceResistedFunction?(params: { distExtra: number; distThreshold: number }): number;
+
+    /**
+     * Callback triggered when releasing while in the pulling state (before threshold is reached).
+     */
+    onReleasingWhilePulling?(): void;
 
     /**
      * Which condition should be met for pullToRefresh to trigger?
