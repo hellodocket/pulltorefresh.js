@@ -1,6 +1,6 @@
 ![PulltoRefresh.js](img/pulltorefresh.gif)
 
-[![Build Status](https://github.com/BoxFactura/pulltorefresh.js/workflows/build/badge.svg)](https://github.com/BoxFactura/pulltorefresh.js/actions)
+[![Build Status](https://github.com/hellodocket/pulltorefresh.js/workflows/build/badge.svg)](https://github.com/hellodocket/pulltorefresh.js/actions)
 [![NPM version](https://badge.fury.io/js/pulltorefreshjs.svg)](http://badge.fury.io/js/pulltorefreshjs)
 [![CDNJS](https://img.shields.io/cdnjs/v/pulltorefreshjs.svg)](https://cdnjs.com/libraries/pulltorefreshjs)
 
