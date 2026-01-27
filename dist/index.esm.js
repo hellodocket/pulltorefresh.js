@@ -52,6 +52,11 @@ function onReset(handler) {
   if (!handler.ptrElement) { return; }
   handler.ptrElement.classList.remove(((handler.classPrefix) + "refresh"));
   handler.ptrElement.style[handler.cssProp] = '0px';
+  handler.onDistance({
+    dist: 0,
+    ptrElement: handler.ptrElement,
+    distThreshold: handler.distThreshold
+  });
   setTimeout(function () {
     // reset state
     _shared.state = 'pending';
@@ -138,6 +143,11 @@ function _setupEvents () {
         e.preventDefault();
       }
       _el.ptrElement.style[_el.cssProp] = (_shared.distResisted) + "px";
+      _el.onDistance({
+        dist: _shared.distResisted,
+        ptrElement: _el.ptrElement,
+        distThreshold: _el.distThreshold
+      });
       _shared.distResisted = _el.distanceResistedFunction({
         distExtra: _shared.distExtra,
         distThreshold: _el.distThreshold
@@ -153,6 +163,13 @@ function _setupEvents () {
         _shared.state = 'pulling';
         _ptr.update(_el);
       }
+    } else {
+      _el.ptrElement.style[_el.cssProp] = '0px';
+      _el.onDistance({
+        dist: 0,
+        ptrElement: _el.ptrElement,
+        distThreshold: _el.distThreshold
+      });
     }
   }
   function _onTouchEnd() {
@@ -169,7 +186,19 @@ function _setupEvents () {
     }, 500);
     if (_shared.state === 'releasing' && _shared.distResisted > _el.distThreshold) {
       _shared.state = 'refreshing';
+
+      // Remove the pull class (which has transition: none) and force a reflow
+      // before setting the style. This ensures the browser enables transitions
+      // before animating back to  dist reload. The class removal below is still needed
+      // for the refreshing branch.
+      _el.ptrElement.classList.remove(((_el.classPrefix) + "pull"));
+      _el.ptrElement.offsetHeight; // force reflow
       _el.ptrElement.style[_el.cssProp] = (_el.distReload) + "px";
+      _el.onDistance({
+        dist: _el.distReload,
+        ptrElement: _el.ptrElement,
+        distThreshold: _el.distThreshold
+      });
       _el.ptrElement.classList.add(((_el.classPrefix) + "refresh"));
       _shared.timeout = setTimeout(function () {
         var retval = _el.onRefresh(function () { return _ptr.onReset(_el); });
@@ -184,12 +213,26 @@ function _setupEvents () {
       if (_shared.state === 'refreshing') {
         return;
       }
+
+      // Remove the pull class (which has transition: none) and force a reflow
+      // before setting the style. This ensures the browser enables transitions
+      // before animating back to 0px. The class removal below is still needed
+      // for the refreshing branch.
+      _el.ptrElement.classList.remove(((_el.classPrefix) + "pull"));
+      _el.ptrElement.offsetHeight; // force reflow
+
       _el.ptrElement.style[_el.cssProp] = '0px';
+      _el.onDistance({
+        dist: 0,
+        ptrElement: _el.ptrElement,
+        distThreshold: _el.distThreshold
+      });
       _shared.state = 'pending';
     }
     _ptr.update(_el);
     _el.ptrElement.classList.remove(((_el.classPrefix) + "release"));
-    _el.ptrElement.classList.remove(((_el.classPrefix) + "pull"));
+    // _el.ptrElement.classList.remove(`${_el.classPrefix}pull`);
+
     _shared.pullStartY = _shared.pullMoveY = null;
     _shared.dist = _shared.distResisted = 0;
   }
@@ -250,6 +293,7 @@ var _defaults = {
   instructionsReleaseToRefresh: 'Release to refresh',
   instructionsRefreshing: 'Refreshing',
   refreshTimeout: 500,
+  onDistance: function () {},
   getMarkup: function () { return _ptrMarkup; },
   getStyles: function () { return _ptrStyles; },
   onInit: function () {},
@@ -275,6 +319,8 @@ function _setupHandler (options) {
 
   // normalize timeout value, even if it is zero
   _handler.refreshTimeout = typeof options.refreshTimeout === 'number' ? options.refreshTimeout : _defaults.refreshTimeout;
+  // normalize distReload value, even if it is zero
+  _handler.distReload = typeof options.distReload === 'number' ? options.distReload : _defaults.distReload;
 
   // normalize elements
   _methods.forEach(function (method) {
@@ -329,6 +375,9 @@ var index = {
 
     var handler = _setupHandler(options);
     _shared.handlers.push(handler);
+
+    // Setup DOM immediately so PTR element exists before pulling starts
+    _ptr.setupDOM(handler);
     return handler;
   },
   // export utils for testing

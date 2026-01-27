@@ -26,6 +26,9 @@ export default {
 
     _shared.handlers.push(handler);
 
+    // Setup DOM immediately so PTR element exists before pulling starts
+    _ptr.setupDOM(handler);
+
     return handler;
   },
 

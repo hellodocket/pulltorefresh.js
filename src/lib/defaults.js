@@ -16,6 +16,7 @@ export default {
   instructionsReleaseToRefresh: 'Release to refresh',
   instructionsRefreshing: 'Refreshing',
   refreshTimeout: 500,
+  onDistance: () => {},
   getMarkup: () => _ptrMarkup,
   getStyles: () => _ptrStyles,
   onInit: () => {},

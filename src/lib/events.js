@@ -71,6 +71,7 @@ export default () => {
       }
 
       _el.ptrElement.style[_el.cssProp] = `${_shared.distResisted}px`;
+      _el.onDistance({ dist: _shared.distResisted, ptrElement: _el.ptrElement, distThreshold: _el.distThreshold });
 
       _shared.distResisted = _el.distanceResistedFunction({
         distExtra: _shared.distExtra,
@@ -89,6 +90,9 @@ export default () => {
         _shared.state = 'pulling';
         _ptr.update(_el);
       }
+    } else {
+      _el.ptrElement.style[_el.cssProp] = '0px';
+      _el.onDistance({ dist: 0, ptrElement: _el.ptrElement, distThreshold: _el.distThreshold });
     }
   }
 
@@ -108,7 +112,15 @@ export default () => {
     if (_shared.state === 'releasing' && _shared.distResisted > _el.distThreshold) {
       _shared.state = 'refreshing';
 
+      // Remove the pull class (which has transition: none) and force a reflow
+      // before setting the style. This ensures the browser enables transitions
+      // before animating back to  dist reload. The class removal below is still needed
+      // for the refreshing branch.
+      _el.ptrElement.classList.remove(`${_el.classPrefix}pull`);
+      _el.ptrElement.offsetHeight; // force reflow
       _el.ptrElement.style[_el.cssProp] = `${_el.distReload}px`;
+      _el.onDistance({ dist: _el.distReload, ptrElement: _el.ptrElement, distThreshold: _el.distThreshold });
+
       _el.ptrElement.classList.add(`${_el.classPrefix}refresh`);
 
       _shared.timeout = setTimeout(() => {
@@ -127,7 +139,15 @@ export default () => {
         return;
       }
 
+      // Remove the pull class (which has transition: none) and force a reflow
+      // before setting the style. This ensures the browser enables transitions
+      // before animating back to 0px. The class removal below is still needed
+      // for the refreshing branch.
+      _el.ptrElement.classList.remove(`${_el.classPrefix}pull`);
+      _el.ptrElement.offsetHeight; // force reflow
+
       _el.ptrElement.style[_el.cssProp] = '0px';
+      _el.onDistance({ dist: 0, ptrElement: _el.ptrElement, distThreshold: _el.distThreshold });
 
       _shared.state = 'pending';
     }
@@ -135,7 +155,7 @@ export default () => {
     _ptr.update(_el);
 
     _el.ptrElement.classList.remove(`${_el.classPrefix}release`);
-    _el.ptrElement.classList.remove(`${_el.classPrefix}pull`);
+    // _el.ptrElement.classList.remove(`${_el.classPrefix}pull`);
 
     _shared.pullStartY = _shared.pullMoveY = null;
     _shared.dist = _shared.distResisted = 0;

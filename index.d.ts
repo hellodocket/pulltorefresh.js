@@ -133,6 +133,7 @@ export interface Options {
      * Defaults to `!window.scrollY`
      */
     shouldPullToRefresh?(): boolean;
+    onDistance?(params: {ptrElement: HTMLElement, dist: number, distThreshold: number}): void;
 }
 
 /**

@@ -16,6 +16,10 @@ export default options => {
   _handler.refreshTimeout = typeof options.refreshTimeout === 'number'
     ? options.refreshTimeout
     : _defaults.refreshTimeout;
+  // normalize distReload value, even if it is zero
+  _handler.distReload = typeof options.distReload === 'number'
+    ? options.distReload
+    : _defaults.distReload;
 
   // normalize elements
   _methods.forEach(method => {

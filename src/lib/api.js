@@ -42,6 +42,7 @@ function onReset(handler) {
 
   handler.ptrElement.classList.remove(`${handler.classPrefix}refresh`);
   handler.ptrElement.style[handler.cssProp] = '0px';
+  handler.onDistance({ dist: 0, ptrElement: handler.ptrElement, distThreshold: handler.distThreshold });
 
   setTimeout(() => {
     // reset state
